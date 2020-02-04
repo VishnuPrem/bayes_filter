@@ -22,8 +22,10 @@ if __name__ == "__main__":
     uniform_prob = 1 / (map_m * map_n * 1.0)
     prior_state = np.full((map_m, map_n), uniform_prob)
     
+    
+    
     for t in range(30):
         
-        (max_like_state, prior_state, lv) = bayes_filter.histogram_filter(cmap, prior_state, actions[t], observations[t])
+        (prior_state, max_like_state) = bayes_filter.histogram_filter(cmap, prior_state, actions[t], observations[t])
         print(max_like_state)
     

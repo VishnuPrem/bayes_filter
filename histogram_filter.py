@@ -21,9 +21,10 @@ class HistogramFilter(object):
     
         ### Your Algorithm goes Below.
         '''
-
-        cmap = np.rot90(cmap, 1)
-        belief = np.rot90(belief, 1)
+        
+        cmap_2 = np.flip(cmap, axis = 0)
+        cmap_3 = np.transpose(cmap_2)
+ 
         # ACTION UPDATE
         
         b = np.copy(belief)   # moves, multiplied my 0.9
@@ -34,25 +35,25 @@ class HistogramFilter(object):
         
         #print('action: ', action)
         
-        # right
+        # up
         if action[1] == 1:
             a[:, -1] *= 10
             b = np.roll(b, 1, axis = 1)
             b[:, 0] = 0
             
-        # left
+        # down
         elif action[1] == -1:
             a[:, 0] *= 10
             b = np.roll(b, -1, axis = 1)
             b[:, -1] = 0
             
-        # down
+        # right
         elif action[0] == 1:
             a[-1, :] *= 10
             b = np.roll(b, 1, axis = 0)
             b[0, :] = 0
             
-        # up
+        # left
         elif action[0] == -1:
             a[0, :] *= 10
             b = np.roll(b, -1, axis = 0)
@@ -60,9 +61,11 @@ class HistogramFilter(object):
             
         belief = a+b
         
-                # SENSOR UPDATE
+        # SENSOR UPDATE
         
-        color1 = cmap
+        
+                
+        color1 = cmap_3
         color0 = 1 - color1
         
         if observation == 1:
@@ -76,19 +79,15 @@ class HistogramFilter(object):
         
         tot = np.sum(belief)
         belief = belief/tot
-            
-        max_like_state = np.unravel_index(belief.argmax(), belief.shape)
         
+        
+        max_like_state = np.unravel_index(belief.argmax(), belief.shape)       
         max_like_state = np.array(max_like_state)
          
-        global local_vars
-        local_vars = inspect.currentframe().f_locals
+#        global local_vars
+#        local_vars = inspect.currentframe().f_locals
         
-        
-        cmap = np.rot90(cmap, 3)
-        belief = np.rot90(belief, 3)
-        
-        return (max_like_state, belief, local_vars)
+        return (belief, max_like_state)
         
             
             
